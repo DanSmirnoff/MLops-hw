@@ -14,13 +14,8 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app):
-    """
-    Lifespan context manager для управления жизненным циклом приложения
-    """
     logger.info("Starting ML Service API")
-
     yield
-
     logger.info("Shutting down ML Service API")
 
 

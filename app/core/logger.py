@@ -3,8 +3,6 @@ import sys
 
 from loguru import logger
 
-# Можно было и логгер пайтона (logging), но этот гораздо проще и быстрее
-
 
 class InterceptHandler(logging.Handler):
     def emit(self, record):
