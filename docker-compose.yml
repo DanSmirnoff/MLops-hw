@@ -1,0 +1,53 @@
+services:
+  ml-service:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=ml-models
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./app:/app/app
+    depends_on:
+      minio:
+        condition: service_healthy
+    command: >
+      sh -c "
+      echo 'Waiting for MinIO...' &&
+      sleep 3 &&
+      uvicorn app.main:app --host 0.0.0.0 --port 8000
+      "
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  dashboard:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://ml-service:8000/api/v1
+    command: streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+    depends_on:
+      - ml-service
+
+volumes:
+  minio_data:
