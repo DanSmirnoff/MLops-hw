@@ -1,11 +1,17 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException
 import numpy as np
 import logging
 
 from .models import (
-    HealthResponse, ModelClassResponse, TrainRequest, TrainResponse,
-    PredictRequest, PredictResponse, ModelsListResponse, ModelInfo,
-    SmthNiceResponse
+    HealthResponse,
+    ModelClassResponse,
+    TrainRequest,
+    TrainResponse,
+    PredictRequest,
+    PredictResponse,
+    ModelsListResponse,
+    ModelInfo,
+    SmthNiceResponse,
 )
 from app.ml.model_manager import ModelManager
 

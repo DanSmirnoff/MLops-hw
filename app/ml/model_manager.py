@@ -8,6 +8,7 @@ class ModelManager:
     Весь функционал связанный с тем что можно делать с моделями:
     (2, 3, 4 пункты)
     """
+
     def __init__(self, models_dir="models"):
         self.models_dir = models_dir
         self.models = {}
@@ -17,7 +18,7 @@ class ModelManager:
     def _load_existing_models(self):
         metadata_file = os.path.join(self.models_dir, "models_metadata.json")
         if os.path.exists(metadata_file):
-            with open(metadata_file, 'r') as f:
+            with open(metadata_file, "r") as f:
                 metadata = json.load(f)
             for model_id, model_info in metadata.items():
                 model_path = os.path.join(self.models_dir, f"{model_id}.joblib")
@@ -25,7 +26,7 @@ class ModelManager:
                     model = BaseModel.load(model_path)
                     model.model_id = model_id
                     model.is_trained = True
-                    model.training_data_shape = model_info.get('training_data_shape')
+                    model.training_data_shape = model_info.get("training_data_shape")
                     self.models[model_id] = model
 
     def _save_metadata(self):
@@ -33,11 +34,11 @@ class ModelManager:
         for model_id, model in self.models.items():
             if model.is_trained:
                 metadata[model_id] = {
-                    'model_type': type(model).__name__,
-                    'training_data_shape': model.training_data_shape
+                    "model_type": type(model).__name__,
+                    "training_data_shape": model.training_data_shape,
                 }
         metadata_file = os.path.join(self.models_dir, "models_metadata.json")
-        with open(metadata_file, 'w') as f:
+        with open(metadata_file, "w") as f:
             json.dump(metadata, f)
 
     def get_available_model_classes(self):
@@ -88,7 +89,7 @@ class ModelManager:
             "model_id": model_id,
             "model_type": type(model).__name__,
             "is_trained": model.is_trained,
-            "training_data_shape": model.training_data_shape
+            "training_data_shape": model.training_data_shape,
         }
 
     def list_models(self):

@@ -26,10 +26,7 @@ class BaseModel:
 
         logger.info(f"Model ({self.model_type}) {self.model_id} trained successfully.")
 
-        return {
-            "model_id": self.model_id,
-            "model_type": self.model_type
-        }
+        return {"model_id": self.model_id, "model_type": self.model_type}
 
     def predict(self, X):
         return self.model.predict(X)
@@ -44,13 +41,17 @@ class BaseModel:
 
 
 class LogisticRegressionModel(BaseModel):
-    def __init__(self, regularisation='l2', C=0.1):
-        super().__init__(LogisticRegression, penalty=regularisation, C=C, fit_intercept=True)
+    def __init__(self, regularisation="l2", C=0.1):
+        super().__init__(
+            LogisticRegression, penalty=regularisation, C=C, fit_intercept=True
+        )
 
 
 class RandomForestClassifierModel(BaseModel):
     def __init__(self, n_estimators=100, max_depth=None):
-        super().__init__(RandomForestClassifier, n_estimators=n_estimators, max_depth=max_depth)
+        super().__init__(
+            RandomForestClassifier, n_estimators=n_estimators, max_depth=max_depth
+        )
 
 
 # Наверное стоит вынести в другое место?

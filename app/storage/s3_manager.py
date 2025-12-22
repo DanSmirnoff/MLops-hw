@@ -1,7 +1,5 @@
-import io
 import json
 import logging
-from typing import Optional, Dict, Any
 import boto3
 from botocore.exceptions import ClientError
 from app.core.config import settings
@@ -14,11 +12,11 @@ class S3Manager:
     # Работаем с s3
     def __init__(self):
         self.client = boto3.client(
-            's3',
-            endpoint_url=f'http://{settings.MINIO_ENDPOINT}',
+            "s3",
+            endpoint_url=f"http://{settings.MINIO_ENDPOINT}",
             aws_access_key_id=settings.MINIO_ACCESS_KEY,
             aws_secret_access_key=settings.MINIO_SECRET_KEY,
-            config=boto3.session.Config(signature_version='s3v4')
+            config=boto3.session.Config(signature_version="s3v4"),
         )
         self.bucket = settings.MINIO_BUCKET
         self._ensure_bucket_exists()
@@ -34,11 +32,7 @@ class S3Manager:
     def save_model(self, model_id, model_data):
         try:
             key = f"models/{model_id}.joblib"
-            self.client.put_object(
-                Bucket=self.bucket,
-                Key=key,
-                Body=model_data
-            )
+            self.client.put_object(Bucket=self.bucket, Key=key, Body=model_data)
             logger.info(f"Model {model_id} saved to S3")
             return True
         except Exception as e:
@@ -48,13 +42,10 @@ class S3Manager:
     def load_model(self, model_id):
         try:
             key = f"models/{model_id}.joblib"
-            response = self.client.get_object(
-                Bucket=self.bucket,
-                Key=key
-            )
-            return response['Body'].read()
+            response = self.client.get_object(Bucket=self.bucket, Key=key)
+            return response["Body"].read()
         except ClientError as e:
-            if e.response['Error']['Code'] == 'NoSuchKey':
+            if e.response["Error"]["Code"] == "NoSuchKey":
                 logger.warning(f"Model {model_id} not found in S3")
             else:
                 logger.error(f"Error loading model from S3: {e}")
@@ -63,10 +54,7 @@ class S3Manager:
     def delete_model(self, model_id):
         try:
             key = f"models/{model_id}.joblib"
-            self.client.delete_object(
-                Bucket=self.bucket,
-                Key=key
-            )
+            self.client.delete_object(Bucket=self.bucket, Key=key)
             logger.info(f"Model {model_id} deleted from S3")
             return True
         except Exception as e:
@@ -78,7 +66,7 @@ class S3Manager:
             self.client.put_object(
                 Bucket=self.bucket,
                 Key="models_metadata.json",
-                Body=json.dumps(metadata).encode('utf-8')
+                Body=json.dumps(metadata).encode("utf-8"),
             )
             return True
         except Exception as e:
@@ -88,9 +76,8 @@ class S3Manager:
     def load_metadata(self):
         try:
             response = self.client.get_object(
-                Bucket=self.bucket,
-                Key="models_metadata.json"
+                Bucket=self.bucket, Key="models_metadata.json"
             )
-            return json.loads(response['Body'].read().decode('utf-8'))
+            return json.loads(response["Body"].read().decode("utf-8"))
         except ClientError:
             return {}

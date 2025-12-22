@@ -208,3 +208,10 @@ __marimo__/
 
 # Test files
 test.py
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.ruff_cache/
